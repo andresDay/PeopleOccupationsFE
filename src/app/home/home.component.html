@@ -1,0 +1,44 @@
+<div [@slideInOut] class="container">
+
+    <div class="row text-center mt-5">
+        <h1>Random People</h1>
+    </div>
+    <div class="row mt-5">
+        <div class="col-2">
+
+            <button class="btn btn-secondary btn-sm" (click)="OnAddPerson()">Add Person</button>
+        </div>
+    </div>
+
+    <div class="row border-bottom text-center mt-3 offset-1">
+        <div class="col-2">
+            <h4>Id</h4>
+        </div>
+        <div class="col-2">
+            <h4>Name</h4>
+        </div>
+        <div class="col-2">
+            <h4>Occupation</h4>
+        </div>
+    </div>
+
+    <div *ngFor="let person of persons; index as personIndex" class="row border-bottom text-center offset-1">
+        <div class="col-2">
+            {{person.id}}
+        </div>
+        <div class="col-2">
+            {{person.name}}
+        </div>
+        <div class="col-2">
+            {{person.occupation}}
+        </div>
+        <div class="col-1">
+            <a style="cursor: pointer; color: grey" (click)="onEditPerson(personIndex)">
+             <mat-icon style="font-size: x-large;">edit</mat-icon></a> 
+         </div>
+        <div class="col-1">
+           <a style="cursor: pointer; color: grey" (click)="onDeletePerson(person.id, personIndex)">
+            <mat-icon style="font-size: x-large;">delete</mat-icon></a> 
+        </div>
+    </div>
+</div>

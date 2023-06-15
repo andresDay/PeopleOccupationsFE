@@ -1,0 +1,11 @@
+div{
+    background-color: #eaebeb;
+    height: 40px;
+    display : flex;
+    align-items : center;
+    justify-content: center;
+    position: fixed;
+    bottom: 0px;
+
+}
+
