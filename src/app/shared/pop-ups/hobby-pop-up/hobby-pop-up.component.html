@@ -1,0 +1,25 @@
+<form [formGroup]="hobbyForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+        <div class="form-group">
+            <label for="hobbyDescription" class="form-label">Description<span style="color:red">*</span></label>
+            <input id="hobbyDescription" formControlName="hobbyDescription" type="text" class="form-control">
+            <div *ngIf="hobbyForm.controls['hobbyDescription'].touched || hobbyForm.controls['hobbyDescription'].dirty">
+                <mat-error *ngIf="hobbyForm.controls['hobbyDescription'].hasError('required')">Hobby Description is
+                    needed</mat-error>
+                <!--    <mat-error *ngIf="linkForm.controls['description'].hasError('descriptionExists')">description already exists in group</mat-error>-->
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-2 offset-7">
+
+            <button class="btn btn-primary btn-sm " type="button" (click)="onCancelAddOrEditHobby()">Cancel</button>
+        </div>
+
+        <div class="col-2">
+            <button class="btn btn-primary btn-sm me-5" type="submit" [disabled]="!hobbyForm.valid">Save</button>
+        </div>
+    </div>
+</form>

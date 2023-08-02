@@ -1,0 +1,25 @@
+<form [formGroup]="occupationForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+        <div class="form-group">
+            <label for="occupationDescription" class="form-label">Description<span style="color:red">*</span></label>
+            <input id="occupationDescription" formControlName="occupationDescription" type="text" class="form-control">
+            <div *ngIf="occupationForm.controls['occupationDescription'].touched || occupationForm.controls['occupationDescription'].dirty">
+                <mat-error *ngIf="occupationForm.controls['occupationDescription'].hasError('required')">Occupation Description is
+                    needed</mat-error>
+                <!--    <mat-error *ngIf="linkForm.controls['description'].hasError('descriptionExists')">description already exists in group</mat-error>-->
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-2 offset-7">
+
+            <button class="btn btn-primary btn-sm " type="button" (click)="onCancelAddOrEditOccupation()">Cancel</button>
+        </div>
+
+        <div class="col-2">
+            <button class="btn btn-primary btn-sm me-5" type="submit" [disabled]="!occupationForm.valid">Save</button>
+        </div>
+    </div>
+</form>

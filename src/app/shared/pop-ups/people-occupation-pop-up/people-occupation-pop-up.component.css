@@ -1,0 +1,9 @@
+button{
+    width: 93px;
+}
+.ng-invalid.ng-touched{
+    border-color: red;
+}
+input{
+    font-size: large;
+}

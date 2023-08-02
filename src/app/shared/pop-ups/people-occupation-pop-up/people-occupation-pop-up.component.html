@@ -1,0 +1,45 @@
+<form [formGroup]="peopleOccupationForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+        <br>
+        <div class="form-group">
+            <label for="name" class="form-label">Name<span style="color:red">*</span></label>
+            <select formControlName="name" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                <option selected> {{selectedPersonName}}</option>
+                <option *ngFor="let person of peopleDropdown" value="{{person.name}}">
+                    {{person.name}}</option>
+            </select>
+            <div *ngIf="peopleOccupationForm.controls['name'].touched || peopleOccupationForm.controls['name'].dirty">
+                <mat-error *ngIf="peopleOccupationForm.controls['name'].hasError('required')">Person is
+                    needed</mat-error>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="occupation" class="form-label">Occupation<span style="color:red">*</span></label>
+            <select formControlName="occupation" class="form-select form-select-sm"
+                aria-label=".form-select-sm example">
+                <option selected> {{selectedOccupationDescription}}</option>
+                <option *ngFor="let occupation of occupationsDropdown" value="{{occupation.description}}">
+                    {{occupation.description}}</option>
+            </select>
+            <div
+                *ngIf="peopleOccupationForm.controls['occupation'].touched || peopleOccupationForm.controls['occupation'].dirty">
+                <mat-error *ngIf="peopleOccupationForm.controls['occupation'].hasError('required')">Occupation is
+                    needed</mat-error>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-2 offset-7">
+
+            <button class="btn btn-primary btn-sm " type="button"
+                (click)="onCancelAddOrEditPeopleOccupation()">Cancel</button>
+        </div>
+
+        <div class="col-2">
+            <button class="btn btn-primary btn-sm me-5" type="submit"
+                [disabled]="!peopleOccupationForm.valid">Save</button>
+        </div>
+    </div>
+</form>

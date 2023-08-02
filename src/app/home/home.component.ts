@@ -1,9 +1,9 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { PeopleService } from '../shared/people.service';
-import { Person } from '../shared/person.model';
+import { PeopleService } from '../shared/services/people.service';
+import { Person } from '../shared/models/person.model';
 import { Subscription } from 'rxjs';
-import { PopupService } from '../shared/popup.service';
+import { PopupService } from '../shared/services/popup.service';
 
 @Component({
   selector: 'app-home',
@@ -12,15 +12,16 @@ import { PopupService } from '../shared/popup.service';
   animations: [
     trigger('slideInOut', [
       transition(':enter', [
-        style({transform: 'translateY(-100%)'}),
-        animate('700ms ease-in', style({transform: 'translateY(0%)'}))
+        style({ transform: 'translateY(-100%)' }),
+        animate('700ms ease-in', style({ transform: 'translateY(0%)' }))
       ]),
       transition(':leave', [
-        animate('700ms ease-in', style({transform: 'translateY(-100%)'}))
+        animate('700ms ease-in', style({ transform: 'translateY(-100%)' }))
       ])
     ])
   ]
 })
+
 export class HomeComponent implements OnInit, OnDestroy {
 
   personIndex: number = 0;
@@ -39,49 +40,50 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.peopleSubjectSubscription = this.peopleService.peopleChanged
       .subscribe((res: Person[]) => {
-        this.persons = res;        
+        this.persons = res;
       });
 
-      this.popupPersonSubjectSubscription = this.popUpService.personAddedOrModified.subscribe(
-        (person: Person) => {
-          if (!this.editMode) {
-            this.peopleService.addPerson(person);
-  
-          } else {
-  
-            this.peopleService.editPerson(person);
-          }
-          this.editMode = false;
+    this.popupPersonSubjectSubscription = this.popUpService.personAddedOrModified.subscribe(
+      (person: Person) => {
+        if (!this.editMode) {
+          this.peopleService.addPerson(person);
           
-  
-        },error => {
-          console.log('Hubo un error al agregar o editar');
-        });
+        } else {
+          
+          this.peopleService.editPerson(person);
+         
+        }
+        this.editMode = false;
 
-    }
 
-
-  OnAddPerson(){
-   this.editMode = false;
-   this.popUpService.openPersonPopUp(undefined); 
+      }, error => {
+        console.log(error + 'Hubo un error al agregar o editar');
+      });
 
   }
 
-  onEditPerson(personIndex: number){
+
+  OnAddPerson() {
+    this.editMode = false;
+    this.popUpService.openPersonPopUp(undefined);
+
+  }
+
+  onEditPerson(personIndex: number) {
     this.editMode = true;
     this.popUpService.openPersonPopUp(this.peopleService.persons[personIndex]);
 
   }
 
 
-  onDeletePerson(id: number, index: number){
+  onDeletePerson(id: number, index: number) {
     this.peopleService.deletePerson(id, index);
 
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.peopleSubjectSubscription.unsubscribe();
     this.popupPersonSubjectSubscription.unsubscribe();
-      
   }
+  
 }

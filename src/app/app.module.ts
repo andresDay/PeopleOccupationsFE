@@ -11,10 +11,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatIconModule } from '@angular/material/icon';
 import {  HttpClientModule } from '@angular/common/http';
-import { PersonPopUpComponent } from './shared/person-pop-up/person-pop-up.component';
+import { PersonPopUpComponent } from './shared/pop-ups/person-pop-up/person-pop-up.component';
 import { MatDialogModule } from '@angular/material/dialog'
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { OccupationListComponent } from './occupation-list/occupation-list.component';
+import { HobbiesListComponent } from './hobbies-list/hobbies-list.component';
+import { PeopleOccupationListComponent } from './people-occupation-list/people-occupation-list.component';
+import { HobbyPopUpComponent } from './shared/pop-ups/hobby-pop-up/hobby-pop-up.component';
+import { OccupationPopUpComponent } from './shared/pop-ups/occupation-pop-up/occupation-pop-up.component';
+import { PeopleOccupationPopUpComponent } from './shared/pop-ups/people-occupation-pop-up/people-occupation-pop-up.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +29,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     HeaderComponent,
     FooterComponent,
     PersonPopUpComponent,
+    OccupationListComponent,
+    HobbiesListComponent,
+    PeopleOccupationListComponent,
+    HobbyPopUpComponent,
+    OccupationPopUpComponent,
+    PeopleOccupationPopUpComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,7 +44,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     HttpClientModule,
     MatDialogModule,
     ReactiveFormsModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    FormsModule
     
   ],
   providers: [],

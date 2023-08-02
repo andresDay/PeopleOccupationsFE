@@ -1,0 +1,55 @@
+<form [formGroup]="personForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+        <div class="form-group">
+            <label for="name" class="form-label">Name<span style="color:red">*</span></label>
+            <input id="name" formControlName="name" type="text" class="form-control">
+            <div *ngIf="personForm.controls['name'].touched || personForm.controls['name'].dirty">
+                <mat-error *ngIf="personForm.controls['name'].hasError('required')">Name is needed</mat-error>
+                <!--    <mat-error *ngIf="linkForm.controls['description'].hasError('descriptionExists')">description already exists in group</mat-error>-->
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="age" class="form-label">Age<span style="color:red">*</span></label>
+            <input id="age" formControlName="age" type="text" class="form-control">
+            <div *ngIf="personForm.controls['age'].touched || personForm.controls['age'].dirty">
+                <mat-error *ngIf="personForm.controls['age'].hasError('required')">age is needed</mat-error>
+                <!-- <mat-error *ngIf="linkForm.controls['url'].hasError('pattern')">url needs to be valid</mat-error>
+                <mat-error *ngIf="linkForm.controls['url'].hasError('urlExists')">url already exists in group</mat-error> -->
+            </div>
+        </div>
+
+        <br>
+        <div class="form-group">
+            <label for="hobby" class="form-label">Hobby<span style="color:red">*</span></label>
+            <select formControlName="hobby" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                <option selected> {{selectedHobbyDescription}}</option>
+                <option *ngFor="let hobby of hobbiesDropdown" value="{{hobby.description}}">
+                    {{hobby.description}}</option>
+            </select>
+            <div *ngIf="personForm.controls['hobby'].touched || personForm.controls['hobby'].dirty">
+                <mat-error *ngIf="personForm.controls['hobby'].hasError('required')">Hobby is needed</mat-error>
+            </div>
+                <!--            
+            <input [(ngModel)]="selectedHobby" id="hobby" formControlName="hobby" type="text" class="form-control" >
+            <div *ngIf="personForm.controls['hobby'].touched || personForm.controls['hobby'].dirty">
+                <mat-error *ngIf="personForm.controls['hobby'].hasError('required')">Hobby is needed</mat-error> -->
+                <!-- <mat-error *ngIf="linkForm.controls['url'].hasError('pattern')">url needs to be valid</mat-error>
+                <mat-error *ngIf="linkForm.controls['url'].hasError('urlExists')">url already exists in group</mat-error> -->
+                <!-- </div>-->
+            </div>
+
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-2 offset-7">
+
+                <button class="btn btn-primary btn-sm " type="button"
+                    (click)="onCancelAddOrEditPerson()">Cancel</button>
+            </div>
+
+            <div class="col-2">
+                <button class="btn btn-primary btn-sm me-5" type="submit" [disabled]="!personForm.valid">Save</button>
+            </div>
+        </div>
+</form>

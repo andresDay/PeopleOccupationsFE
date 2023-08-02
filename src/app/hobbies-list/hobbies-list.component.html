@@ -1,0 +1,32 @@
+<div [@slideInOut] class="container">
+
+    <div class="row text-center mt-5">
+        <h1>Random Hobbies</h1>
+    </div>
+    <div class="row mt-5">
+        <div class="col-2">
+
+            <button class="btn btn-secondary btn-sm" (click)="OnAddHobby()">Add Hobby</button>
+        </div>
+    </div>
+
+    <div class="row border-bottom text-center mt-3 offset-1">
+        <div class="col-2">
+            <h4>Hobby</h4>
+        </div>        
+    </div>
+
+    <div *ngFor="let hobby of hobbies; index as hobbyIndex" class="row border-bottom text-center offset-1">
+        <div class="col-2">
+            {{hobby.description}}
+        </div>
+        <div class="col-1">
+            <a style="cursor: pointer; color: grey" (click)="onEditHobby(hobbyIndex)">
+             <mat-icon style="font-size: x-large;">edit</mat-icon></a> 
+         </div>
+        <div class="col-1">
+           <a style="cursor: pointer; color: grey" (click)="onDeleteHobby(hobby.id, hobbyIndex)">
+            <mat-icon style="font-size: x-large;">delete</mat-icon></a> 
+        </div>
+    </div>
+</div>

@@ -11,26 +11,26 @@
     </div>
 
     <div class="row border-bottom text-center mt-3 offset-1">
-        <div class="col-2">
-            <h4>Id</h4>
-        </div>
-        <div class="col-2">
+        <div class="col-3">
             <h4>Name</h4>
         </div>
-        <div class="col-2">
-            <h4>Occupation</h4>
+        <div class="col-3">
+            <h4>Age</h4>
+        </div>
+        <div class="col-3">
+            <h4>Hobby</h4>
         </div>
     </div>
 
     <div *ngFor="let person of persons; index as personIndex" class="row border-bottom text-center offset-1">
-        <div class="col-2">
-            {{person.id}}
-        </div>
-        <div class="col-2">
+        <div class="col-3">
             {{person.name}}
         </div>
-        <div class="col-2">
-            {{person.occupation}}
+        <div class="col-3">
+            {{person.age}}
+        </div>
+        <div class="col-3">
+            {{person.hobbyDescription}}
         </div>
         <div class="col-1">
             <a style="cursor: pointer; color: grey" (click)="onEditPerson(personIndex)">
