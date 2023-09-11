@@ -67,7 +67,7 @@ export class PeopleOccupationPopUpComponent implements OnInit {
     this.dataserverService.getOccupationsFromServer().subscribe((res) => {
       this.occupationsDropdown = res;
     });
-    this.dataserverService.getPeopleFromServer().subscribe((res) => {
+    this.dataserverService.getPeopleFromServer("asc", 0, 3).subscribe((res) => {
       this.peopleDropdown = res;
     });
 

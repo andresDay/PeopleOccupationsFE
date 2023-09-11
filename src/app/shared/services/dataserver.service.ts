@@ -18,9 +18,10 @@ export class DataServerService {
    
   constructor(private http: HttpClient) { }
 
-  //people
-  getPeopleFromServer(): Observable<Person[]> {
-    return this.http.get<Person[]>(environment.URLBASE + 'api/people/getpeople');
+  //people  
+  getPeopleFromServer(sortType: string, pageNumber: number, pageSize: number): Observable<Person[]> {
+    const params = '/?sortType=' + sortType + '&pageNumber=' + pageNumber + '&pageSize=' + pageSize
+    return this.http.get<Person[]>(environment.URLBASE + 'api/people/getpeople' + params);
 
   }
 

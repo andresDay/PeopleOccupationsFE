@@ -24,8 +24,8 @@ export class PeopleService {
   constructor(private dataServerService: DataServerService) { }
 
 
-  getPeople() {
-    this.dataServerService.getPeopleFromServer().subscribe((res) => {
+  getPeople(sortType: string, pageNumber: number, pageSize: number) {
+    this.dataServerService.getPeopleFromServer(sortType, pageNumber, pageSize).subscribe((res) => {
       this.persons = res;
       this.peopleChanged.next(this.persons.slice());   
     });

@@ -1,9 +1,11 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PeopleService } from '../shared/services/people.service';
 import { Person } from '../shared/models/person.model';
-import { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { PopupService } from '../shared/services/popup.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-home',
@@ -22,11 +24,20 @@ import { PopupService } from '../shared/services/popup.service';
   ]
 })
 
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   personIndex: number = 0;
   persons: Person[] = [];
 
+  //mat-table
+  displayedColumns = ['name', 'age', 'hobbyDescription'];
+ 
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+
+  @ViewChild(MatSort, {static: true})
+   sort!: MatSort;
+  
   peopleSubjectSubscription: Subscription = new Subscription;
   popupPersonSubjectSubscription: Subscription = new Subscription;
 
@@ -36,7 +47,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.peopleService.getPeople();
+    const defaultSortType = "asc";
+    const defaultPageNumber = 0;
+    const defaultPageSize = 3;
+    
+    this.peopleService.getPeople(defaultSortType, defaultPageNumber, defaultPageSize);
 
     this.peopleSubjectSubscription = this.peopleService.peopleChanged
       .subscribe((res: Person[]) => {
@@ -62,6 +77,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   }
 
+  ngAfterViewInit(): void {
+    
+    this.paginator.page
+    .pipe(
+      tap(()=> this.peopleService.getPeople("asc", this.paginator.pageIndex, this.paginator.pageSize))
+    )
+    .subscribe();
+
+  }
 
   OnAddPerson() {
     this.editMode = false;
