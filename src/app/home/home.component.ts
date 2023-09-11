@@ -1,8 +1,8 @@
-import { animate, style, transition, trigger } from '@angular/animations';
+ import { animate, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PeopleService } from '../shared/services/people.service';
 import { Person } from '../shared/models/person.model';
-import { Subscription, tap } from 'rxjs';
+import { Subscription, merge, tap } from 'rxjs';
 import { PopupService } from '../shared/services/popup.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -32,11 +32,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   //mat-table
   displayedColumns = ['name', 'age', 'hobbyDescription'];
  
-  @ViewChild(MatPaginator)
-  paginator!: MatPaginator;
 
-  @ViewChild(MatSort, {static: true})
-   sort!: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort!: MatSort;
   
   peopleSubjectSubscription: Subscription = new Subscription;
   popupPersonSubjectSubscription: Subscription = new Subscription;
@@ -78,10 +76,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    
-    this.paginator.page
-    .pipe(
-      tap(()=> this.peopleService.getPeople("asc", this.paginator.pageIndex, this.paginator.pageSize))
+    //cuando uno de los 2 eventos ocurra, se llama al peopleService
+    merge(this.sort.sortChange, this.paginator.page)
+        .pipe(
+        tap(()=> this.peopleService.getPeople(this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize))
     )
     .subscribe();
 
