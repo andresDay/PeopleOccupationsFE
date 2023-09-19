@@ -10,10 +10,10 @@
         </div>
     </div>
 
-    <table mat-table [dataSource]="persons" matSort matSortDisableClear class="people-table mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort matSortDisableClear class="people-table mat-elevation-z8">
 
         <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef  mat-sort-header>Name</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
             <td mat-cell *matCellDef="let person"> {{person.name}}</td>
         </ng-container>
 
@@ -22,24 +22,58 @@
             <td mat-cell *matCellDef="let person"> {{person.age}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="hobbyDescription" mat-sort-header>
-            <th mat-header-cell *matHeaderCellDef>Hobby</th>
+        <ng-container matColumnDef="hobbyDescription">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Hobby</th>
             <td mat-cell *matCellDef="let person"> {{person.hobbyDescription}}</td>
         </ng-container>
 
+        <ng-container matColumnDef="Edit-Delete">
+            <th class="buttonColumn" mat-header-cell *matHeaderCellDef></th>
+            <td class="buttonColumn" mat-cell *matCellDef="let person; index as personIndex">
+                <a style="cursor: pointer; color: grey" (click)="onEditPerson(personIndex)">
+                    <mat-icon style="font-size: x-large; margin-right: 20px;">edit</mat-icon></a> 
+                    <a style="cursor: pointer; color: grey" (click)="onDeletePerson(person.id, personIndex)">
+                        <mat-icon style="font-size: x-large;">delete</mat-icon></a> 
+          </ng-container>
+
+
+        <!-- Filter Table Headers -->
+        <ng-container matColumnDef="nameFilter">
+            <th mat-header-cell *matHeaderCellDef>
+                <mat-form-field>
+                    <input matInput (keyup.enter)="applyFilter($event, 'nameFilter')" placeholder="Filter" >
+                </mat-form-field>
+            </th>
+        </ng-container>
+
+        <ng-container matColumnDef="ageFilter">
+            <th mat-header-cell *matHeaderCellDef>
+                <mat-form-field>
+                    <input matInput (keyup.enter)="applyFilter($event, 'ageFilter')" placeholder="Filter">
+                </mat-form-field>
+            </th>
+        </ng-container>
+
+        <ng-container matColumnDef="hobbyDescriptionFilter">
+            <th mat-header-cell *matHeaderCellDef>
+                <mat-form-field>
+                    <input matInput (keyup.enter)="applyFilter($event, 'hobbyDescriptionFilter')" placeholder="Filter">
+                </mat-form-field>
+            </th>
+        </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-header-row *matHeaderRowDef="['nameFilter', 'ageFilter','hobbyDescriptionFilter']" class="filter-row"></tr>
         <tr mat-row *matRowDef="let person; columns: displayedColumns"></tr>
 
 
     </table>
-    <div class="paginator">
 
-        <mat-paginator class="mat-elevation-z8" 
-         [length]="persons.length"
-         [pageSize]="3"
-         [pageSizeOptions]="[3,5,10]">
-        </mat-paginator>
-    </div>
+    <mat-paginator class="mat-elevation-z8 paginator" [length]="peopleCount" [pageIndex]="peopleFilterArgs.paginationArgs?.pageNumber"
+        [pageSize]="peopleFilterArgs.paginationArgs?.pageSize" [pageSizeOptions]="[3,5,10,20]">
+    </mat-paginator>
+
+
 
 
     <!-- <div class="row border-bottom text-center mt-3 offset-1">

@@ -1,46 +1,54 @@
-.container{
+.container {
   padding-bottom: 60px;
 }
+
 .people-table {
-    min-height: 360px;
-    margin-top: 10px;
-    width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    tr:hover {
-      background: whitesmoke;
-      cursor: pointer;
-    }
-  }
-  
-  .paginator{
-    width: 600px;
-    margin:auto;
-    
-    /* text-align: center; */
-    /* justify-content: center; */
-  }
-  
-  .mat-column-name {
-    /* width: 90px; */
-    /* border-right: 1px solid black; */
-    padding-right: 24px;
-    text-align: center;
-  }
-  
+  min-height: 360px;
+  margin-top: 10px;
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 
-  .mat-column-age {
-    font-style: italic;
-    text-align: center;
+  tr:hover {
+    background: whitesmoke;
+    cursor: pointer;
   }
+}
 
-  .mat-column-hobbyDescription {
-    padding-left:60px;
-    text-align: left;
-  }  
+.paginator {
+  /* width: 600px;
+    height: 75px; */
+  margin: auto;
+
+  /* text-align: center; */
+  /* justify-content: center; */
+}
+
+.mat-column-name {
+  /* width: 90px; */
+  /* border-right: 1px solid black; */
+  padding-right: 24px;
+  text-align: center;
+}
 
 
-  /* .hobbyDescription-cell {
+.mat-column-age {
+  font-style: italic;
+  text-align: center;
+}
+
+.mat-column-hobbyDescription {
+  padding-left: 60px;
+  text-align: left;
+}
+
+
+.buttonColumn{
+  width: 110px;
+
+}
+
+/* .hobbyDescription-cell {
     text-align: center;
     margin: 10px auto;
   }
@@ -57,4 +65,3 @@
     font-size: 20px;
   }
    */
-  
