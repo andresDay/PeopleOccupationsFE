@@ -72,6 +72,11 @@
                     <input [(ngModel)]="ageFilterValue" matInput (keyup)="applyFilter($event, 'ageFilter')"
                         placeholder="Filter">
                 </mat-form-field>
+                <mat-form-field appearance="fill" class="filter-operator">
+                    <mat-select [(ngModel)]="ageSelectedOperator" placeholder="Operator" (selectionChange)="onAgeOperatorChange($event)">
+                      <mat-option *ngFor="let operator of filterOperators" [value]="operator">{{ operator }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
             </th>
         </ng-container>
 
@@ -95,7 +100,7 @@
                 </mat-form-field>
 
                 <mat-form-field appearance="fill" class="filter-date-width">
-                    <mat-select [(ngModel)]="selectedOperator" placeholder="Operator" (selectionChange)="onDateOrOperatorChange($event)">
+                    <mat-select [(ngModel)]="lastModifiedSelectedOperator" placeholder="Operator" (selectionChange)="onDateOrOperatorChange($event)">
                       <mat-option *ngFor="let operator of filterOperators" [value]="operator">{{ operator }}</mat-option>
                     </mat-select>
                   </mat-form-field>

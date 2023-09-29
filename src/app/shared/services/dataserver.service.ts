@@ -27,6 +27,7 @@ export class DataServerService {
     + '&pageSize=' + args.paginationArgs?.pageSize
     + '&nameFilterValue=' + args.nameFilterValue
     + '&ageFilterValue=' + args.ageFilterValue
+    + '&ageFilterOperator=' + args.ageFilterOperator
     + '&hobbyIdFilterValue=' + args.hobbyIdFilterValue
     + '&lastModifiedFilterValue=' + args.lastModifiedFilterValue
     + '&lastModifiedFilterOperator=' + args.lastModifiedFilterOperator;

@@ -12,7 +12,6 @@ import { CardinalityEnum } from '../shared/models/Filter/Generic/sortArgs';
 import { FilterOperator } from '../shared/models/Filter/filterOperators';
 
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -57,13 +56,11 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   hobbyIdFilterValue: number | undefined | null = null;
 
   selectedDate: Date | null = null;
-  
+
   filterOperators = Object.keys(FilterOperator).filter((v) => isNaN(Number(v)));
-  selectedOperator: FilterOperator | null = null; //default
-
+  lastModifiedSelectedOperator: FilterOperator | null = null; //default
+  ageSelectedOperator: FilterOperator | null = null; //default
   isFilterHidden: boolean = false;
-
-
 
   peopleFilterArgs = this.initializePeopleFilterArgs();
 
@@ -94,7 +91,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.editMode = false;
 
-
       }, error => {
         console.log(error + 'Hubo un error al agregar o editar');
       });
@@ -103,7 +99,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
 
-    this.peopleService.getPeople(this.peopleFilterArgs);
+    this.getPeople();
 
     //when sorting, go to page 0
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
@@ -123,6 +119,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
+  //CRUD API
   OnAddPerson() {
     this.editMode = false;
     this.popUpService.openPersonPopUp(undefined);
@@ -141,48 +138,53 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-  ngOnDestroy() {
-    this.peopleSubjectSubscription.unsubscribe();
-    this.popupPersonSubjectSubscription.unsubscribe();
-    this.getPeopleNoRecordsSubjectSubscription.unsubscribe();
-  }
-
-  applyFilter(event: Event, columnName: string) {
-
-    //when filtering, go to page 0
-    this.paginator.pageIndex = 0;
-
-    const inputElement = event.target as HTMLInputElement;
-    const filterValue = inputElement.value;
-
-    //to allow filter simultaneity
-    switch (columnName) {
-
-      case 'nameFilter': this.nameFilterValue = filterValue.trim().toLowerCase(); break;
-      case 'ageFilter': this.ageFilterValue = filterValue.trim() as unknown as number; break;
-      case 'hobbyDescriptionFilter': this.hobbyIdFilterValue = filterValue.trim() as unknown as number; break;
-      default: break;
-
-    }
-
-    this.setCurrentFilterArgs()
-
-    this.peopleService.getPeople(this.peopleFilterArgs);
-
+  
+  reloadTableFromServer() {
+    //if reset filters applied or manually deleted
+    this.getPeople();    
+    this.refreshTableFromPeopleService();
   }
 
   refreshTableFromPeopleService() {
     this.peopleCount = this.peopleService.peopleCount;
     this.dataSource.data = this.persons;
   };
+  
+ 
+  getPeople() {
 
-  reloadTableFromServer() {
-    //if reset filters applied
-    if (!this.nameFilterValue && !this.ageFilterValue && !this.hobbyIdFilterValue && !this.selectedDate && !this.selectedOperator) {
+    if(this.areAllFiltersEmpty())
       this.peopleFilterArgs = this.initializePeopleFilterArgs();
-    }
+    else
+      this.setCurrentFilterArgs();
+
     this.peopleService.getPeople(this.peopleFilterArgs);
-    this.refreshTableFromPeopleService();
+  }
+
+  //Filters Section
+  
+  setCurrentFilterArgs() {
+    this.peopleFilterArgs = {
+
+      sortArgs: {
+        sortBy: this.sort.active,
+        sortCardinality: this.sortDirectionToEnum(this.sort.direction)
+      },
+
+      paginationArgs: {
+        pageNumber: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+      },
+
+      nameFilterValue: this.nameFilterValue,
+      ageFilterValue: this.ageFilterValue,
+      ageFilterOperator: this.ageSelectedOperator,
+      hobbyIdFilterValue: this.hobbyIdFilterValue,
+      lastModifiedFilterValue: this.selectedDate?.toISOString(),
+      lastModifiedFilterOperator: this.lastModifiedSelectedOperator
+
+    }
+
   }
 
   initializePeopleFilterArgs(): PeopleFilterArgs {
@@ -201,6 +203,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
       nameFilterValue: null,
       ageFilterValue: null,
+      ageFilterOperator: null,
       hobbyIdFilterValue: null,
       lastModifiedFilterValue: null,
       lastModifiedFilterOperator: FilterOperator.Equal
@@ -210,7 +213,63 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     return newPeopleFilterArgs;
   }
 
+ 
+  toggleShowHideFiltersRow() {
+    this.isFilterHidden = !this.isFilterHidden;
+  }
 
+  areAllFiltersEmpty(): boolean {
+
+    return !this.nameFilterValue && !this.ageFilterValue
+      && !this.hobbyIdFilterValue && !this.selectedDate
+      && !this.lastModifiedSelectedOperator && !this.ageSelectedOperator;
+  }
+
+  onDateOrOperatorChange(event: any) {
+    this.getPeople()
+  }
+  
+  onAgeOperatorChange(event: any){
+    this.getPeople()
+    
+  }
+  
+  resetFilterValues() {
+
+    this.nameFilterValue = null;
+    this.ageFilterValue = null;
+    this.ageSelectedOperator = null;
+    this.hobbyIdFilterValue = null;
+    this.selectedDate = null;
+    this.lastModifiedSelectedOperator = null;
+
+    this.getPeople();
+  }
+
+  applyFilter(event: Event, columnName: string) {
+
+    //when filtering, go to page 0
+    this.paginator.pageIndex = 0;
+
+    const inputElement = event.target as HTMLInputElement;
+    const filterValue = inputElement.value;
+
+    switch (columnName) {
+
+      case 'nameFilter': this.nameFilterValue = filterValue.trim().toLowerCase(); break;
+      case 'ageFilter': this.ageFilterValue = filterValue.trim() as unknown as number; break;
+      case 'hobbyDescriptionFilter': this.hobbyIdFilterValue = filterValue.trim() as unknown as number; break;
+      default: break;
+
+    }
+
+    this.setCurrentFilterArgs()
+
+    this.peopleService.getPeople(this.peopleFilterArgs);
+
+  }
+
+  //sort section
   sortDirectionToEnum(sortDirection: string): CardinalityEnum {
     if (sortDirection == 'asc') {
       return CardinalityEnum.asc;
@@ -224,49 +283,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-  resetFilterValues() {
-
-    this.nameFilterValue = null;
-    this.ageFilterValue = null;
-    this.hobbyIdFilterValue = null;
-    this.selectedDate = null;
-    this.selectedOperator = null;
-
-  }
-
-  toggleShowHideFiltersRow() {
-    this.isFilterHidden = !this.isFilterHidden;
-  }
-
-  onDateOrOperatorChange(event: any) {
-
-    this.setCurrentFilterArgs();
-    this.peopleService.getPeople(this.peopleFilterArgs);
-
-  }
-
-  setCurrentFilterArgs() {
-    this.peopleFilterArgs = {
-
-      sortArgs: {
-        sortBy: this.sort.active,
-        sortCardinality: this.sortDirectionToEnum(this.sort.direction)
-      },
-
-      paginationArgs: {
-        pageNumber: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-      },
-
-      nameFilterValue: this.nameFilterValue,
-      ageFilterValue: this.ageFilterValue,
-      hobbyIdFilterValue: this.hobbyIdFilterValue,
-      lastModifiedFilterValue: this.selectedDate?.toISOString(),
-      lastModifiedFilterOperator: this.selectedOperator
-
-      
-    }
-
-  }
+  ngOnDestroy() {
+    this.peopleSubjectSubscription.unsubscribe();
+    this.popupPersonSubjectSubscription.unsubscribe();
+    this.getPeopleNoRecordsSubjectSubscription.unsubscribe();
+  }  
 
 }

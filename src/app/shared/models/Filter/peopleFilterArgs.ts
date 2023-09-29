@@ -11,9 +11,9 @@ export interface PeopleFilterArgs {
     //filterValues
     nameFilterValue?: string | null;
     ageFilterValue?: number | null;
+    ageFilterOperator?: FilterOperator | null;
     hobbyIdFilterValue?: number | null;
     lastModifiedFilterValue?: string | null;
-
     lastModifiedFilterOperator?: FilterOperator | null;
     
 } 
