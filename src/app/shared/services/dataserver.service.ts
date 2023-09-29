@@ -17,30 +17,21 @@ import { PeopleFilterArgs } from '../models/Filter/peopleFilterArgs';
 })
 export class DataServerService {
 
-
   constructor(private http: HttpClient) { }
 
-  //people  
-  // getPeopleFromServer(filterSortAndPaginationArgs: FilterSortAndPaginationArgs | null): Observable<Person[]> {
-  //   // const params = '/?sortType=' + sortType + '&sortActive=' + sortActive +'&pageNumber=' + pageNumber + '&pageSize=' + pageSize
-  //   const params = '/?filterSortAndPaginationArgs=' + filterSortAndPaginationArgs
-  //   return this.http.get<Person[]>(environment.URLBASE + 'api/people/getpeople' + params);
-  
-  // }
-  
-  // getPeopleFromServer(body: any): Observable<peopleWithTotalCount> {
-    
-    //   return this.http.post<peopleWithTotalCount>(environment.URLBASE + 'api/people/getpeople', body);
-    
-    // }
-    
-    getPeopleFromServer(args: any): Observable<peopleWithTotalCount> {
+  getPeopleFromServer(args: any): Observable<peopleWithTotalCount> {
 
-      const params = '/?sortBy=' + args.sortArgs?.sortBy + '&sortCardinality=' + args.sortArgs?.sortCardinality
-                   + '&pageNumber=' + args.paginationArgs?.pageNumber + '&pageSize=' + args.paginationArgs?.pageSize
-                    + '&nameFilterValue=' + args.nameFilterValue + '&ageFilterValue=' + args.ageFilterValue + '&hobbyIdFilterValue=' + args.hobbyIdFilterValue 
-
-        return this.http.get<peopleWithTotalCount>(environment.URLBASE + 'api/people/getpeople' + params, {});
+    const params = '/?sortBy=' + args.sortArgs?.sortBy
+    + '&sortCardinality=' + args.sortArgs?.sortCardinality
+    + '&pageNumber=' + args.paginationArgs?.pageNumber
+    + '&pageSize=' + args.paginationArgs?.pageSize
+    + '&nameFilterValue=' + args.nameFilterValue
+    + '&ageFilterValue=' + args.ageFilterValue
+    + '&hobbyIdFilterValue=' + args.hobbyIdFilterValue
+    + '&lastModifiedFilterValue=' + args.lastModifiedFilterValue
+    + '&lastModifiedFilterOperator=' + args.lastModifiedFilterOperator;
+    
+    return this.http.get<peopleWithTotalCount>(environment.URLBASE + 'api/people/getpeople' + params, {});
 
   }
 

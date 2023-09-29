@@ -22,7 +22,7 @@ export class PeopleService {
   constructor(private dataServerService: DataServerService) { }
   
   getPeople(personFilterArgs: PeopleFilterArgs) {
-    
+
     this.dataServerService.getPeopleFromServer(personFilterArgs)    
         
     .subscribe((res) => {

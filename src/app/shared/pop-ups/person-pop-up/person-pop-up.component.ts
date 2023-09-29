@@ -67,7 +67,7 @@ export class PersonPopUpComponent implements OnInit {
 
   onSubmit() {
     if (this.personForm.value.name && this.personForm.value.age && this.personForm.value.hobby) {
-      const person = new Person(this.popUpService.personId, this.personForm.value.name, Number(this.personForm.value.age),  this.selectedHobbyDescription,  this.selectedHobbyId as number);
+      const person = new Person(this.popUpService.personId, this.personForm.value.name, Number(this.personForm.value.age),  this.selectedHobbyDescription,  this.selectedHobbyId as number, null);
       this.popUpService.sendPersonToPeopleService(person);
     }
   }

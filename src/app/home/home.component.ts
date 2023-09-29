@@ -6,9 +6,11 @@ import { Subscription, catchError, merge, tap, throwError } from 'rxjs';
 import { PopupService } from '../shared/services/popup.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, SortDirection } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { PeopleFilterArgs } from '../shared/models/Filter/peopleFilterArgs';
 import { CardinalityEnum } from '../shared/models/Filter/Generic/sortArgs';
+import { FilterOperator } from '../shared/models/Filter/filterOperators';
+
 
 
 @Component({
@@ -35,8 +37,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   //mat-table
   dataSource = new MatTableDataSource<Person>();
-  displayedColumns = ['name', 'age', 'hobbyDescription', 'Edit-Delete'];
+  displayedColumns = ['name', 'age', 'hobbyDescription', 'lastModified', 'Edit-Delete'];
 
+  // @ViewChild(MatTable, { static: true }) table!: MatTable<Person>;
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
@@ -48,9 +51,19 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   peopleCount = 0;
 
-  previousNameFilterValue: string | undefined | null = null;
-  previousAgeFilterValue: number | undefined | null = null;
-  previousHobbyIdFilterValue: number | undefined | null = null;
+  //filters
+  nameFilterValue: string | undefined | null = null;
+  ageFilterValue: number | undefined | null = null;
+  hobbyIdFilterValue: number | undefined | null = null;
+
+  selectedDate: Date | null = null;
+  
+  filterOperators = Object.keys(FilterOperator).filter((v) => isNaN(Number(v)));
+  selectedOperator: FilterOperator | null = null; //default
+
+  isFilterHidden: boolean = false;
+
+
 
   peopleFilterArgs = this.initializePeopleFilterArgs();
 
@@ -59,14 +72,14 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
 
     this.getPeopleNoRecordsSubjectSubscription = this.peopleService.getNoRecords
-    .subscribe((res: string) =>{
-      this.dataSource.data = [];
-      // alert(res);
-    });
+      .subscribe((res: string) => {
+        this.dataSource.data = [];
+        // alert(res);
+      });
     this.peopleSubjectSubscription = this.peopleService.peopleChanged
       .subscribe((res: Person[]) => {
         this.persons = res;
-        this.refreshTable();
+        this.refreshTableFromPeopleService();
       });
 
     this.popupPersonSubjectSubscription = this.popUpService.personAddedOrModified.subscribe(
@@ -100,27 +113,12 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
       .pipe(
         tap(() =>
-          this.peopleFilterArgs = {
-
-            sortArgs: {
-              sortBy: this.sort.active,
-              sortCardinality: this.sortDirectionToEnum(this.sort.direction)
-            },
-
-            paginationArgs: {
-              pageNumber: this.paginator.pageIndex,
-              pageSize: this.paginator.pageSize,
-            },
-
-            nameFilterValue: this.previousNameFilterValue,
-            ageFilterValue: this.previousAgeFilterValue,
-            hobbyIdFilterValue: this.previousHobbyIdFilterValue
-          }
+          this.setCurrentFilterArgs()
         ),
         tap(() =>
 
           this.peopleService.getPeople(this.peopleFilterArgs)
-        )
+        ),
       ).subscribe();
 
   }
@@ -153,7 +151,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     //when filtering, go to page 0
     this.paginator.pageIndex = 0;
-    //here reset the sort in browser
 
     const inputElement = event.target as HTMLInputElement;
     const filterValue = inputElement.value;
@@ -161,39 +158,32 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     //to allow filter simultaneity
     switch (columnName) {
 
-      case 'nameFilter': this.previousNameFilterValue = filterValue.trim().toLowerCase(); break;
-      case 'ageFilter': this.previousAgeFilterValue = filterValue.trim() as unknown as number; break;
-      case 'hobbyDescriptionFilter': this.previousHobbyIdFilterValue = filterValue.trim() as unknown as number; break;
+      case 'nameFilter': this.nameFilterValue = filterValue.trim().toLowerCase(); break;
+      case 'ageFilter': this.ageFilterValue = filterValue.trim() as unknown as number; break;
+      case 'hobbyDescriptionFilter': this.hobbyIdFilterValue = filterValue.trim() as unknown as number; break;
+      default: break;
 
     }
 
-    this.peopleFilterArgs = {
-
-      sortArgs: {
-        sortBy: this.sort.active,
-        sortCardinality: this.sortDirectionToEnum(this.sort.direction)
-      },
-
-      paginationArgs: {
-        pageNumber: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-      },
-
-      nameFilterValue: this.previousNameFilterValue,
-      ageFilterValue: this.previousAgeFilterValue,
-      hobbyIdFilterValue: this.previousHobbyIdFilterValue
-    }
+    this.setCurrentFilterArgs()
 
     this.peopleService.getPeople(this.peopleFilterArgs);
+
   }
 
-  refreshTable() {
+  refreshTableFromPeopleService() {
     this.peopleCount = this.peopleService.peopleCount;
-    //this.dataSource.paginator = this.paginator;
-    //this.dataSource.sort = this.sort;
     this.dataSource.data = this.persons;
-
   };
+
+  reloadTableFromServer() {
+    //if reset filters applied
+    if (!this.nameFilterValue && !this.ageFilterValue && !this.hobbyIdFilterValue && !this.selectedDate && !this.selectedOperator) {
+      this.peopleFilterArgs = this.initializePeopleFilterArgs();
+    }
+    this.peopleService.getPeople(this.peopleFilterArgs);
+    this.refreshTableFromPeopleService();
+  }
 
   initializePeopleFilterArgs(): PeopleFilterArgs {
 
@@ -211,7 +201,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
       nameFilterValue: null,
       ageFilterValue: null,
-      hobbyIdFilterValue: null
+      hobbyIdFilterValue: null,
+      lastModifiedFilterValue: null,
+      lastModifiedFilterOperator: FilterOperator.Equal
 
     }
 
@@ -232,11 +224,48 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-  //unused so far
-  resetPreviousFilterValues() {
-    this.previousNameFilterValue = null;
-    this.previousAgeFilterValue = null;
-    this.previousHobbyIdFilterValue = null;
+  resetFilterValues() {
+
+    this.nameFilterValue = null;
+    this.ageFilterValue = null;
+    this.hobbyIdFilterValue = null;
+    this.selectedDate = null;
+    this.selectedOperator = null;
+
+  }
+
+  toggleShowHideFiltersRow() {
+    this.isFilterHidden = !this.isFilterHidden;
+  }
+
+  onDateOrOperatorChange(event: any) {
+
+    this.setCurrentFilterArgs();
+    this.peopleService.getPeople(this.peopleFilterArgs);
+
+  }
+
+  setCurrentFilterArgs() {
+    this.peopleFilterArgs = {
+
+      sortArgs: {
+        sortBy: this.sort.active,
+        sortCardinality: this.sortDirectionToEnum(this.sort.direction)
+      },
+
+      paginationArgs: {
+        pageNumber: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+      },
+
+      nameFilterValue: this.nameFilterValue,
+      ageFilterValue: this.ageFilterValue,
+      hobbyIdFilterValue: this.hobbyIdFilterValue,
+      lastModifiedFilterValue: this.selectedDate?.toISOString(),
+      lastModifiedFilterOperator: this.selectedOperator
+
+      
+    }
 
   }
 

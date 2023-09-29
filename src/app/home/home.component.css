@@ -5,14 +5,23 @@
 .people-table {
   min-height: 360px;
   margin-top: 10px;
-  width: 600px;
+  width: 300px;
   margin-left: auto;
   margin-right: auto;
 
-  tr:hover {
-    background: whitesmoke;
-    cursor: pointer;
-  }
+}
+
+tr:hover {
+  background: whitesmoke;
+  cursor: pointer;
+}
+
+.filter-width{
+  width: 157px;
+}
+
+.filter-date-width{
+  width: 150px;
 }
 
 .paginator {
@@ -46,6 +55,25 @@
 .buttonColumn{
   width: 110px;
 
+}
+section {
+  display: table;
+}
+
+.button-row{
+  width: 800px;
+  margin-top:30px;
+  margin-bottom:30px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.filter-button{
+  width: 140px;
+}
+
+.hide-filters-row{
+  display: none;
 }
 
 /* .hobbyDescription-cell {
